@@ -1,0 +1,181 @@
+{
+  "FastAPI Router": {
+    "scope": "python",
+    "prefix": "farouter",
+    "body": [
+      "from fastapi import APIRouter, Depends, HTTPException",
+      "from pydantic import BaseModel",
+      "",
+      "router = APIRouter(prefix=\"/api/${1:resource}\", tags=[\"${1:resource}\"])",
+      "",
+      "",
+      "class ${2:Resource}Response(BaseModel):",
+      "    id: str",
+      "    ${3:field}: str",
+      "",
+      "",
+      "@router.get(\"/\", response_model=list[${2:Resource}Response])",
+      "async def list_${1:resource}s():",
+      "    ${0:pass}",
+      "",
+      "",
+      "@router.get(\"/{item_id}\", response_model=${2:Resource}Response)",
+      "async def get_${1:resource}(item_id: str):",
+      "    pass",
+      "",
+      "",
+      "@router.post(\"/\", response_model=${2:Resource}Response, status_code=201)",
+      "async def create_${1:resource}():",
+      "    pass"
+    ],
+    "description": "FastAPI router with CRUD endpoints and Pydantic model"
+  },
+
+  "Pydantic Model": {
+    "scope": "python",
+    "prefix": "pymodel",
+    "body": [
+      "from pydantic import BaseModel, Field",
+      "from typing import Optional",
+      "",
+      "",
+      "class ${1:Model}Base(BaseModel):",
+      "    ${2:field}: str = Field(..., description=\"${3:description}\")",
+      "",
+      "",
+      "class ${1:Model}Create(${1:Model}Base):",
+      "    pass",
+      "",
+      "",
+      "class ${1:Model}Response(${1:Model}Base):",
+      "    id: str",
+      "    created_at: Optional[str] = None"
+    ],
+    "description": "Pydantic base/create/response model trio"
+  },
+
+  "pytest Async Test": {
+    "scope": "python",
+    "prefix": "pytest-async",
+    "body": [
+      "import pytest",
+      "from httpx import AsyncClient, ASGITransport",
+      "",
+      "",
+      "@pytest.mark.asyncio",
+      "async def test_${1:endpoint}(client: AsyncClient):",
+      "    response = await client.${2|get,post,put,delete|}(\"${3:/api/endpoint}\")",
+      "    assert response.status_code == ${4:200}",
+      "    ${0:data = response.json()}"
+    ],
+    "description": "Async pytest test for FastAPI endpoint"
+  },
+
+  "pytest Fixture": {
+    "scope": "python",
+    "prefix": "pytest-fixture",
+    "body": [
+      "@pytest.fixture",
+      "async def ${1:fixture_name}():",
+      "    ${2:# Setup}",
+      "    yield ${3:value}",
+      "    ${0:# Teardown}"
+    ],
+    "description": "pytest async fixture with setup/teardown"
+  },
+
+  "Azure Credential + Client": {
+    "scope": "python",
+    "prefix": "azclient",
+    "body": [
+      "import os",
+      "from azure.identity import DefaultAzureCredential",
+      "",
+      "credential = DefaultAzureCredential()",
+      "",
+      "# ${1|BlobServiceClient,CosmosClient,SecretClient,SearchClient|}",
+      "${0}"
+    ],
+    "description": "Azure DefaultAzureCredential setup (MCAPS-compliant, no connection strings)"
+  },
+
+  "Azure Blob Client": {
+    "scope": "python",
+    "prefix": "azblob",
+    "body": [
+      "import os",
+      "from azure.identity import DefaultAzureCredential",
+      "from azure.storage.blob import BlobServiceClient",
+      "",
+      "credential = DefaultAzureCredential()",
+      "blob_client = BlobServiceClient(",
+      "    account_url=f\"https://{os.environ['STORAGE_ACCOUNT_NAME']}.blob.core.windows.net\",",
+      "    credential=credential",
+      ")",
+      "${0}"
+    ],
+    "description": "Azure Blob Storage client (MCAPS-compliant, DefaultAzureCredential)"
+  },
+
+  "Azure Cosmos Client": {
+    "scope": "python",
+    "prefix": "azcosmos",
+    "body": [
+      "import os",
+      "from azure.identity import DefaultAzureCredential",
+      "from azure.cosmos import CosmosClient",
+      "",
+      "credential = DefaultAzureCredential()",
+      "cosmos_client = CosmosClient(",
+      "    url=os.environ[\"COSMOS_ENDPOINT\"],",
+      "    credential=credential",
+      ")",
+      "database = cosmos_client.get_database_client(os.environ[\"COSMOS_DATABASE\"])",
+      "container = database.get_container_client(\"${1:container_name}\")",
+      "${0}"
+    ],
+    "description": "Azure Cosmos DB client (MCAPS-compliant, DefaultAzureCredential)"
+  },
+
+  "FastAPI Lifespan": {
+    "scope": "python",
+    "prefix": "falifespan",
+    "body": [
+      "from contextlib import asynccontextmanager",
+      "from fastapi import FastAPI",
+      "",
+      "",
+      "@asynccontextmanager",
+      "async def lifespan(app: FastAPI):",
+      "    # Startup: initialize clients, connections",
+      "    ${1:pass}",
+      "    yield",
+      "    # Shutdown: cleanup",
+      "    ${2:pass}",
+      "",
+      "",
+      "app = FastAPI(lifespan=lifespan)",
+      "${0}"
+    ],
+    "description": "FastAPI lifespan for startup/shutdown (client initialization)"
+  },
+
+  "React Component": {
+    "scope": "typescriptreact",
+    "prefix": "rfc",
+    "body": [
+      "interface ${1:Component}Props {",
+      "  ${2:prop}: ${3:string};",
+      "}",
+      "",
+      "export function ${1:Component}({ ${2:prop} }: ${1:Component}Props) {",
+      "  return (",
+      "    <div>",
+      "      ${0}",
+      "    </div>",
+      "  );",
+      "}"
+    ],
+    "description": "React functional component with TypeScript props"
+  }
+}

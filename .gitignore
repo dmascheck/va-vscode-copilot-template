@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# Node.js
+node_modules/
+web/dist/
+web/build/
+
+# Environment
+.env
+.env.project
+.env.dev
+.env.prod
+.env.test
+!.env.example
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs (session history — kept locally, not committed)
+Logs/
+
+# Azure
+.azure/
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Azurite (local storage emulator)
+__azurite_db_*.json
+__blobstorage__/

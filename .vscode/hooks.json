@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vscode/main/src/vs/workbench/contrib/chat/common/hooks.schema.json",
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "description": "Auto-format Python files with ruff after edit",
+        "command": "ruff format ${file}",
+        "when": "${file} =~ \\.py$"
+      }
+    ],
+    "beforeTerminalCommand": [
+      {
+        "description": "Warn before dangerous destructive commands",
+        "command": "echo '⚠️  DANGEROUS COMMAND DETECTED — review carefully before proceeding'",
+        "when": "${command} =~ (rm -rf|git push --force|git reset --hard|az group delete|DROP TABLE|DELETE FROM)"
+      }
+    ]
+  }
+}

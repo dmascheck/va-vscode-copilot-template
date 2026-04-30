@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "ms-azuretools.vscode-azure-github-copilot",
+    "ms-vscode.vscode-node-azure-pack",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "charliermarsh.ruff",
+    "eamodio.gitlens",
+    "ms-vscode.azure-account",
+    "ms-azuretools.vscode-cosmosdb",
+    "ms-azuretools.vscode-docker",
+    "humao.rest-client",
+    "ms-playwright.playwright",
+    "streetsidesoftware.code-spell-checker",
+    "redhat.vscode-yaml"
+  ]
+}

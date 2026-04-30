@@ -1,0 +1,19 @@
+# Ruff Configuration — Logging Enforcement
+# T201: ban print()
+# T203: ban pprint()
+# These are NON-NEGOTIABLE — use the logging framework instead.
+
+[lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "T201",   # print() — BLOCKED
+    "T203",   # pprint() — BLOCKED
+]
+
+[lint.per-file-ignores]
+# Test files may use print for debugging fixtures — still blocked by default.
+# Add project-specific exemptions here as needed:
+# "scripts/some_script.py" = ["T201"]

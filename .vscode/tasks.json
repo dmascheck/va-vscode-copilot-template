@@ -1,0 +1,55 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "test",
+      "type": "shell",
+      "command": "python -m pytest tests/ -v",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "lint",
+      "type": "shell",
+      "command": "ruff check . && ruff format --check .",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "lint-fix",
+      "type": "shell",
+      "command": "ruff check --fix . && ruff format .",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "deploy-check",
+      "type": "shell",
+      "command": "bash scripts/validate-project.sh",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "setup-hooks",
+      "type": "shell",
+      "command": "python scripts/setup-git-hooks.py",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "setup-local",
+      "type": "shell",
+      "command": "bash scripts/setup_local.sh",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "check-all",
+      "dependsOn": ["test", "lint"],
+      "dependsOrder": "parallel",
+      "problemMatcher": [],
+      "group": "test"
+    }
+  ]
+}

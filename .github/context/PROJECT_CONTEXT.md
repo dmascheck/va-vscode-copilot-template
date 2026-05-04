@@ -1,12 +1,12 @@
 # Project Context
 
-**Project:** ${PROJECT_NAME}
-**Status:** Initialized — run `#va-project` to configure
-**Last Updated:** ${DATE}
+**Project:** VA VS Code + Copilot Template
+**Status:** v2.0 released — public template on GitHub
+**Last Updated:** 2026-05-04
 
 ## Current State
 
-_Run `#va-project` to populate this section with your project details._
+Template v2.0 pushed to github.com/dmascheck/va-vscode-copilot-template. Public template enabled. Includes interactive setup.py, #va-project wizard, MCP server config, git hooks, beginner-friendly tone.
 
 ## Architecture
 

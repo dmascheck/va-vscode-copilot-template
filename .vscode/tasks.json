@@ -38,9 +38,9 @@
       "presentation": { "reveal": "always", "panel": "shared" }
     },
     {
-      "label": "setup-local",
+      "label": "setup",
       "type": "shell",
-      "command": "bash scripts/setup_local.sh",
+      "command": "python scripts/setup.py",
       "problemMatcher": [],
       "presentation": { "reveal": "always", "panel": "shared" }
     },

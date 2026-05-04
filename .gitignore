@@ -30,6 +30,7 @@ web/build/
 .idea/
 *.swp
 *.swo
+.vscode/mcp.json
 
 # OS
 .DS_Store
@@ -37,6 +38,7 @@ Thumbs.db
 
 # Logs (session history — kept locally, not committed)
 Logs/
+.terminal-logs/
 
 # Azure
 .azure/

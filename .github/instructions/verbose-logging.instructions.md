@@ -1,25 +1,27 @@
 ---
 applyTo: "**"
-description: "NON-NEGOTIABLE verbose logging mandate for ALL languages and ALL operations"
+description: "VA best practice — structured verbose logging for all languages and operations"
 ---
 
-# Verbose Logging Standards (NON-NEGOTIABLE)
+# Verbose Logging Standards (VA Best Practice)
 
-**Every piece of code, every script, every command, every endpoint, every call — gets verbose logging. No exceptions. No silent operations.**
+> **⚠️ VA Best Practice:** Structured logging with timestamps, severity levels, and correlation IDs is strongly recommended for all production VA code. It enables Azure Monitor integration, HIPAA audit trails, and incident diagnosis. Teams may enforce this strictly if needed.
+
+For production code, prefer the project logging framework over `print()`/`console.log()`. For quick debugging or learning, `print()` is acceptable — just add a comment noting it should be replaced before production.
 
 ## Language-Specific Frameworks
 
 ### Python
-- **Use:** `from scripts.logging_config import setup_logging`
-- **BLOCKED:** `print()`, `pprint()`, `subprocess.DEVNULL`, `logging.disable()`
+- **Recommended:** `from scripts.logging_config import setup_logging`
+- **Avoid in production:** `print()`, `pprint()`, `subprocess.DEVNULL`, `logging.disable()`
 
 ### JavaScript / TypeScript
-- **Use:** `import { logger } from '@/utils/logger'`
-- **BLOCKED:** `console.log()`, `console.warn()`, `console.error()`
+- **Recommended:** `import { logger } from '@/utils/logger'`
+- **Avoid in production:** `console.log()`, `console.warn()`, `console.error()`
 
 ### Bash
-- **Use:** `source scripts/lib/log.sh && log_init "category"`
-- **BLOCKED:** bare `echo` (use `log_info`, `log_error`, `log_cmd`, etc.)
+- **Recommended:** `source scripts/lib/log.sh && log_init "category"`
+- **Avoid in production:** bare `echo` (use `log_info`, `log_error`, `log_cmd`, etc.)
 
 ## Mandatory Logging Points
 
@@ -43,7 +45,7 @@ STDOUT: (full output)
 STDERR: (full output if any)
 ```
 
-**NEVER** use `subprocess.DEVNULL`, `>/dev/null`, `2>/dev/null`, or `&>/dev/null`.
+**Avoid** `subprocess.DEVNULL`, `>/dev/null`, `2>/dev/null`, or `&>/dev/null` in production — capture output for diagnostics.
 
 ### Every External API Call
 ```

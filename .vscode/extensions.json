@@ -7,13 +7,10 @@
     "ms-python.python",
     "ms-python.vscode-pylance",
     "charliermarsh.ruff",
-    "eamodio.gitlens",
     "ms-vscode.azure-account",
     "ms-azuretools.vscode-cosmosdb",
     "ms-azuretools.vscode-docker",
     "humao.rest-client",
-    "ms-playwright.playwright",
-    "streetsidesoftware.code-spell-checker",
-    "redhat.vscode-yaml"
+    "ms-playwright.playwright"
   ]
 }

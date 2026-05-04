@@ -1,7 +1,6 @@
-# Ruff Configuration — Logging Enforcement
-# T201: ban print()
-# T203: ban pprint()
-# These are NON-NEGOTIABLE — use the logging framework instead.
+# Ruff Configuration — Code Quality
+# T201: flags print() — prefer logging framework for production code
+# T203: flags pprint() — prefer logging framework for production code
 
 [lint]
 select = [
@@ -9,11 +8,13 @@ select = [
     "W",      # pycodestyle warnings
     "F",      # pyflakes
     "I",      # isort
-    "T201",   # print() — BLOCKED
-    "T203",   # pprint() — BLOCKED
+    "T201",   # print() — prefer logging in production
+    "T203",   # pprint() — prefer logging in production
 ]
 
 [lint.per-file-ignores]
-# Test files may use print for debugging fixtures — still blocked by default.
+# CLI scripts use print() for user-facing output — that's the right tool there.
+"scripts/setup.py" = ["T201"]
+"scripts/setup-git-hooks.py" = ["T201"]
 # Add project-specific exemptions here as needed:
 # "scripts/some_script.py" = ["T201"]

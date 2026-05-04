@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Extract a readable chat digest from Copilot session log files.
 
 Produces a condensed markdown file with:
@@ -87,14 +88,20 @@ def extract_from_jsonl(path: Path) -> tuple[list[dict[str, str]], int]:
             if msg_type == "user.message":
                 content = obj.get("data", {}).get("content", "")
                 if content:
-                    messages.append({"role": "USER", "content": content, "ts": ts_short})
+                    messages.append(
+                        {"role": "USER", "content": content, "ts": ts_short}
+                    )
 
             elif msg_type == "assistant.message":
                 content = obj.get("data", {}).get("content", "")
                 if content:
-                    messages.append({"role": "ASSISTANT", "content": content, "ts": ts_short})
+                    messages.append(
+                        {"role": "ASSISTANT", "content": content, "ts": ts_short}
+                    )
 
-    logger.info("extract_from_jsonl: %d lines, %d messages extracted", lines_read, len(messages))
+    logger.info(
+        "extract_from_jsonl: %d lines, %d messages extracted", lines_read, len(messages)
+    )
     return messages, lines_read
 
 
@@ -142,7 +149,9 @@ def extract_from_vscode_native(path: Path) -> tuple[list[dict[str, str]], int]:
                         if isinstance(msg, dict):
                             text = msg.get("text", "") or msg.get("content", "")
                             if text:
-                                messages.append({"role": "USER", "content": text, "ts": ""})
+                                messages.append(
+                                    {"role": "USER", "content": text, "ts": ""}
+                                )
             continue
 
         if not isinstance(k, list) or v is None:
@@ -159,8 +168,12 @@ def extract_from_vscode_native(path: Path) -> tuple[list[dict[str, str]], int]:
                             messages.append({"role": "USER", "content": text, "ts": ""})
 
         # Patch: k=['requests', N, 'response'] → assistant response parts
-        if (len(k) == 3 and k[0] == "requests" and k[2] == "response"
-                and isinstance(v, list)):
+        if (
+            len(k) == 3
+            and k[0] == "requests"
+            and k[2] == "response"
+            and isinstance(v, list)
+        ):
             for part in v:
                 if not isinstance(part, dict):
                     continue
@@ -174,14 +187,20 @@ def extract_from_vscode_native(path: Path) -> tuple[list[dict[str, str]], int]:
                     if isinstance(content, dict):
                         val = content.get("value", "")
                         if val and isinstance(val, str):
-                            messages.append({"role": "ASSISTANT", "content": val, "ts": ""})
+                            messages.append(
+                                {"role": "ASSISTANT", "content": val, "ts": ""}
+                            )
                     continue
                 # Other kinds may have a direct value string
                 val = part.get("value", "")
                 if isinstance(val, str) and len(val) > 20:
                     messages.append({"role": "ASSISTANT", "content": val, "ts": ""})
 
-    logger.info("extract_from_vscode_native: %d objects, %d messages extracted", len(data_objects), len(messages))
+    logger.info(
+        "extract_from_vscode_native: %d objects, %d messages extracted",
+        len(data_objects),
+        len(messages),
+    )
     return messages, len(data_objects)
 
 
@@ -209,7 +228,9 @@ def detect_format(path: Path) -> str:
     return "jsonl"
 
 
-def build_digest(messages: list[dict[str, str]], source_name: str, input_bytes: int) -> str:
+def build_digest(
+    messages: list[dict[str, str]], source_name: str, input_bytes: int
+) -> str:
     """Build a markdown digest from extracted messages.
 
     Args:
@@ -255,7 +276,11 @@ def build_digest(messages: list[dict[str, str]], source_name: str, input_bytes: 
 
     logger.info(
         "build_digest: %d user, %d assistant, input=%d KB, output=%d KB (%.0f%% reduction)",
-        user_count, asst_count, input_bytes // 1024, output_bytes // 1024, reduction,
+        user_count,
+        asst_count,
+        input_bytes // 1024,
+        output_bytes // 1024,
+        reduction,
     )
 
     return output
@@ -297,7 +322,7 @@ def process_file(jsonl_path: Path) -> Path:
         # Find first complete section header to avoid partial content
         first_header = truncated.find("\n## ")
         if first_header > 0:
-            truncated = truncated[first_header + 1:]
+            truncated = truncated[first_header + 1 :]
         cap_note = (
             f"<!-- DIGEST CAPPED: {original_size // 1024}KB → {MAX_DIGEST_BYTES // 1024}KB. "
             f"Early conversation trimmed. Full raw .jsonl in Logs/chat/archive/ -->\n\n"
@@ -305,7 +330,8 @@ def process_file(jsonl_path: Path) -> Path:
         digest = cap_note + truncated
         logger.info(
             "process_file: capped digest %dKB → %dKB",
-            original_size // 1024, len(digest.encode("utf-8")) // 1024,
+            original_size // 1024,
+            len(digest.encode("utf-8")) // 1024,
         )
 
     # Always write digest to Logs/chat/ (not archive/)

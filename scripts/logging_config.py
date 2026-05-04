@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Centralized Logging Configuration
 
@@ -27,10 +28,8 @@ Features:
 
 from __future__ import annotations
 
-import asyncio
 import functools
 import gzip
-import glob
 import logging
 import logging.handlers
 import os
@@ -174,7 +173,9 @@ def setup_logging(
         _LOG_DIR.mkdir(parents=True, exist_ok=True)
         _ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
 
-        defaults = _CATEGORY_DEFAULTS.get(category, (_DEFAULT_MAX_BYTES, _DEFAULT_BACKUP_COUNT))
+        defaults = _CATEGORY_DEFAULTS.get(
+            category, (_DEFAULT_MAX_BYTES, _DEFAULT_BACKUP_COUNT)
+        )
         if max_bytes is None:
             max_bytes = defaults[0]
         if backup_count is None:
@@ -185,7 +186,11 @@ def setup_logging(
             return logger
         logger.setLevel(logging.DEBUG)
 
-        use_json = os.environ.get("STRUCTURED_LOGGING", "").lower() in ("true", "1", "yes")
+        use_json = os.environ.get("STRUCTURED_LOGGING", "").lower() in (
+            "true",
+            "1",
+            "yes",
+        )
         fmt_str = _JSON_FORMAT if use_json else _FORMAT
         formatter = logging.Formatter(fmt_str, datefmt=_DATE_FORMAT)
 
@@ -208,16 +213,26 @@ def setup_logging(
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
 
-        logger.info("Logging system initialized: category=%s, file=%s, max=%dMB, backups=%d",
-                     category, _LOG_DIR / f"{category}.log", max_bytes // (1024 * 1024), backup_count)
+        logger.info(
+            "Logging system initialized: category=%s, file=%s, max=%dMB, backups=%d",
+            category,
+            _LOG_DIR / f"{category}.log",
+            max_bytes // (1024 * 1024),
+            backup_count,
+        )
         return logger
 
     except Exception:
         # Bootstrap fallback — if logging setup fails, at least stderr works
-        logging.basicConfig(level=logging.DEBUG, stream=sys.stderr,
-                            format=_FORMAT, datefmt=_DATE_FORMAT)
+        logging.basicConfig(
+            level=logging.DEBUG, stream=sys.stderr, format=_FORMAT, datefmt=_DATE_FORMAT
+        )
         fallback = logging.getLogger(category)
-        fallback.error("Logging setup failed for category '%s', using stderr fallback", category, exc_info=True)
+        fallback.error(
+            "Logging setup failed for category '%s', using stderr fallback",
+            category,
+            exc_info=True,
+        )
         return fallback
 
 
@@ -257,7 +272,15 @@ def log_startup_diagnostics(logger: logging.Logger) -> None:
     logger.info("PID: %d", os.getpid())
 
     # Log env vars (mask secrets)
-    secret_keys = {"password", "secret", "key", "token", "credential", "sas", "connection"}
+    secret_keys = {
+        "password",
+        "secret",
+        "key",
+        "token",
+        "credential",
+        "sas",
+        "connection",
+    }
     for k, v in sorted(os.environ.items()):
         if any(s in k.lower() for s in secret_keys):
             logger.info("ENV %s = ****", k)
@@ -267,7 +290,11 @@ def log_startup_diagnostics(logger: logging.Logger) -> None:
     # Disk space
     try:
         usage = shutil.disk_usage(os.getcwd())
-        logger.info("Disk: %.1fGB free / %.1fGB total", usage.free / (1024**3), usage.total / (1024**3))
+        logger.info(
+            "Disk: %.1fGB free / %.1fGB total",
+            usage.free / (1024**3),
+            usage.total / (1024**3),
+        )
     except OSError:
         logger.warning("Could not read disk usage")
 
@@ -275,7 +302,9 @@ def log_startup_diagnostics(logger: logging.Logger) -> None:
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pip", "list", "--format=columns"],
-            capture_output=True, text=True, timeout=15,
+            capture_output=True,
+            text=True,
+            timeout=15,
         )
         if result.returncode == 0:
             logger.info("Installed packages:\n%s", result.stdout)
@@ -294,6 +323,7 @@ def log_startup_diagnostics(logger: logging.Logger) -> None:
 
 def log_timing(func: Callable) -> Callable:
     """Decorator that logs function entry, exit, timing, and errors."""
+
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         logger = logging.getLogger(func.__module__)
@@ -302,17 +332,27 @@ def log_timing(func: Callable) -> Callable:
         try:
             result = func(*args, **kwargs)
             elapsed = (time.perf_counter() - start) * 1000
-            logger.debug("EXIT  %s → %s (%.1fms)", func.__qualname__, _summarize(result), elapsed)
+            logger.debug(
+                "EXIT  %s → %s (%.1fms)", func.__qualname__, _summarize(result), elapsed
+            )
             return result
         except Exception as exc:
             elapsed = (time.perf_counter() - start) * 1000
-            logger.error("FAIL  %s raised %s: %s (%.1fms)", func.__qualname__, type(exc).__name__, exc, elapsed)
+            logger.error(
+                "FAIL  %s raised %s: %s (%.1fms)",
+                func.__qualname__,
+                type(exc).__name__,
+                exc,
+                elapsed,
+            )
             raise
+
     return wrapper
 
 
 def log_timing_async(func: Callable) -> Callable:
     """Async version of log_timing."""
+
     @functools.wraps(func)
     async def wrapper(*args: Any, **kwargs: Any) -> Any:
         logger = logging.getLogger(func.__module__)
@@ -321,12 +361,21 @@ def log_timing_async(func: Callable) -> Callable:
         try:
             result = await func(*args, **kwargs)
             elapsed = (time.perf_counter() - start) * 1000
-            logger.debug("EXIT  %s → %s (%.1fms)", func.__qualname__, _summarize(result), elapsed)
+            logger.debug(
+                "EXIT  %s → %s (%.1fms)", func.__qualname__, _summarize(result), elapsed
+            )
             return result
         except Exception as exc:
             elapsed = (time.perf_counter() - start) * 1000
-            logger.error("FAIL  %s raised %s: %s (%.1fms)", func.__qualname__, type(exc).__name__, exc, elapsed)
+            logger.error(
+                "FAIL  %s raised %s: %s (%.1fms)",
+                func.__qualname__,
+                type(exc).__name__,
+                exc,
+                elapsed,
+            )
             raise
+
     return wrapper
 
 
@@ -349,13 +398,28 @@ def log_subprocess_result(
     command_desc: str = "",
 ) -> None:
     """Log the result of a subprocess call with full output."""
-    desc = command_desc or " ".join(str(a) for a in result.args) if result.args else "unknown"
+    desc = (
+        command_desc or " ".join(str(a) for a in result.args)
+        if result.args
+        else "unknown"
+    )
     logger.info("SUBPROCESS: %s → exit_code=%d", desc, result.returncode)
     if result.stdout:
-        logger.debug("STDOUT:\n%s", result.stdout if isinstance(result.stdout, str) else result.stdout.decode("utf-8", errors="replace"))
+        logger.debug(
+            "STDOUT:\n%s",
+            result.stdout
+            if isinstance(result.stdout, str)
+            else result.stdout.decode("utf-8", errors="replace"),
+        )
     if result.stderr:
         log_level = logging.ERROR if result.returncode != 0 else logging.DEBUG
-        logger.log(log_level, "STDERR:\n%s", result.stderr if isinstance(result.stderr, str) else result.stderr.decode("utf-8", errors="replace"))
+        logger.log(
+            log_level,
+            "STDERR:\n%s",
+            result.stderr
+            if isinstance(result.stderr, str)
+            else result.stderr.decode("utf-8", errors="replace"),
+        )
 
 
 def log_file_operation(
@@ -367,8 +431,13 @@ def log_file_operation(
     """Log a file operation with path and size."""
     p = Path(path)
     size = p.stat().st_size if p.exists() else 0
-    logger.info("FILE %s: %s (%d bytes) %s", operation.upper(), p, size,
-                " ".join(f"{k}={v}" for k, v in extra.items()) if extra else "")
+    logger.info(
+        "FILE %s: %s (%d bytes) %s",
+        operation.upper(),
+        p,
+        size,
+        " ".join(f"{k}={v}" for k, v in extra.items()) if extra else "",
+    )
 
 
 def log_external_call(
@@ -381,8 +450,15 @@ def log_external_call(
 ) -> None:
     """Log an external HTTP call with timing."""
     level = logging.INFO if 200 <= status_code < 400 else logging.ERROR
-    logger.log(level, "HTTP %s %s → %d (%.1fms) %s", method.upper(), url, status_code, elapsed_ms,
-               " ".join(f"{k}={v}" for k, v in extra.items()) if extra else "")
+    logger.log(
+        level,
+        "HTTP %s %s → %d (%.1fms) %s",
+        method.upper(),
+        url,
+        status_code,
+        elapsed_ms,
+        " ".join(f"{k}={v}" for k, v in extra.items()) if extra else "",
+    )
 
 
 def log_db_query(
@@ -393,8 +469,13 @@ def log_db_query(
     elapsed_ms: float = 0,
 ) -> None:
     """Log a database query with params, row count, and timing."""
-    logger.info("DB QUERY (%.1fms, %s rows): %s | params=%s",
-                elapsed_ms, row_count if row_count is not None else "?", query[:500], params)
+    logger.info(
+        "DB QUERY (%.1fms, %s rows): %s | params=%s",
+        elapsed_ms,
+        row_count if row_count is not None else "?",
+        query[:500],
+        params,
+    )
 
 
 def log_config_loaded(

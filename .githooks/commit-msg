@@ -1,0 +1,53 @@
+#!/bin/bash
+# Commit message hook: Validates conventional commit format
+# Installed by: python scripts/setup-git-hooks.py
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(head -1 "$COMMIT_MSG_FILE")
+
+# Allow merge commits and fixup commits
+if [[ "$COMMIT_MSG" =~ ^Merge|^fixup!|^squash! ]]; then
+    exit 0
+fi
+
+# Conventional commit pattern: type(optional scope): description
+PATTERN='^(feat|fix|docs|chore|refactor|test|style|perf|ci|build|revert)(\(.+\))?!?: .+'
+
+if [[ ! "$COMMIT_MSG" =~ $PATTERN ]]; then
+    echo ""
+    echo -e "${RED}❌ Commit message does not follow conventional format.${NC}"
+    echo ""
+    echo "  Your message: $COMMIT_MSG"
+    echo ""
+    echo "  Expected format: <type>: <description>"
+    echo ""
+    echo "  Valid types:"
+    echo "    feat:     New feature"
+    echo "    fix:      Bug fix"
+    echo "    docs:     Documentation only"
+    echo "    chore:    Maintenance (deps, config)"
+    echo "    refactor: Code change (no feature/fix)"
+    echo "    test:     Adding/updating tests"
+    echo "    style:    Formatting (no code change)"
+    echo "    perf:     Performance improvement"
+    echo "    ci:       CI/CD changes"
+    echo "    build:    Build system changes"
+    echo "    revert:   Revert a previous commit"
+    echo ""
+    echo "  Examples:"
+    echo "    feat: add patient lookup API"
+    echo "    fix: correct Azure Gov endpoint URL"
+    echo "    docs: update README quick start"
+    echo "    chore: update dependencies"
+    echo ""
+    echo -e "${YELLOW}  To bypass (not recommended): git commit --no-verify${NC}"
+    echo ""
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Commit message format valid${NC}"

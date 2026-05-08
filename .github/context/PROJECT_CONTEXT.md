@@ -2,11 +2,11 @@
 
 **Project:** VA VS Code + Copilot Template
 **Status:** v2.0 released — public template on GitHub
-**Last Updated:** 2026-05-04
+**Last Updated:** 2026-05-08
 
 ## Current State
 
-Template v2.0 pushed to github.com/dmascheck/va-vscode-copilot-template. Public template enabled. Includes interactive setup.py, #va-project wizard, MCP server config, git hooks, beginner-friendly tone.
+Template v2.0 live at github.com/dmascheck/va-vscode-copilot-template. Public template enabled. Verified: no terminal logger or foreign-language dependencies shipped. Clean repo confirmed.
 
 ## Architecture
 

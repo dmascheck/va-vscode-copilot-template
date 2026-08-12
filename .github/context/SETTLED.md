@@ -1,4 +1,10 @@
 <!-- BEGIN GENERATED: audit-open-findings (emit_open_findings.py) -->
+## DO NOT START HERE - this is a BACKLOG, not a queue
+
+The queue is `.github/context/NEXT_SESSION.md` in this repo. The one declared next action for the platform is in `friction-audit/.github/context/STATUS.md`.
+
+Reading the findings below FIRST is what drifted the 2026-08-12 session: it opened to this list, picked an estate-wide sweep nobody asked for, reverted 434 files across 8 repos, and never touched the declared priority all day. A finding is work OWED - it is not work NEXT, and it is not permission to start.
+
 ## AUDIT FINDINGS - open, measured 2026-08-11
 
 3 finding(s) from the 2026-08-11 platform deep dive apply to va-vscode-copilot-template. Full detail with every evidence receipt: `~/VSCodeProjects/friction-audit/findings/deepdive-20260811/board.json`.

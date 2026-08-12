@@ -41,6 +41,17 @@ else
         'ghp_[a-zA-Z0-9]{36}'
         'xox[bpors]-[a-zA-Z0-9-]+'
         '[0-9]{3}-[0-9]{2}-[0-9]{4}'
+        # Azure. Verified absent on 2026-08-12: a staged storage connection string scanned
+        # clean and reported "No secrets detected". access_key= above does not match
+        # AccountKey=, so the whole Azure family was going through untouched - in the one
+        # repository here with a PUBLIC remote.
+        'AccountKey\s*='
+        'DefaultEndpointsProtocol\s*=\s*https'
+        'SharedAccessSignature'
+        'AccountName\s*=.*AccountKey'
+        # Private keys. This pattern begins with dashes, so the grep below MUST pass "--"
+        # before it or grep reads it as options and the rule silently never fires.
+        '-----BEGIN [A-Z ]*PRIVATE KEY-----'
     )
 
     # Files to skip
@@ -53,12 +64,15 @@ else
         fi
 
         for pattern in "${SECRET_PATTERNS[@]}"; do
-            matches=$(grep -inE "$pattern" "$file" 2>/dev/null || true)
-            if [ -n "$matches" ]; then
-                echo -e "  ${RED}❌ Possible secret in $file:${NC}"
-                echo "$matches" | head -3 | while read -r line; do
-                    echo -e "     ${YELLOW}$line${NC}"
-                done
+            # "--" is required: the private-key pattern starts with dashes and grep would
+            # otherwise parse it as options, silently disabling that rule.
+            # Only LINE NUMBERS are reported, never the matched text. Echoing the match
+            # printed the candidate secret to the terminal and into any captured log,
+            # spreading it to two more places at the exact moment of trying to contain it.
+            match_lines=$(grep -inE -- "$pattern" "$file" 2>/dev/null | cut -d: -f1 | tr '\n' ',' | sed 's/,$//')
+            if [ -n "$match_lines" ]; then
+                echo -e "  ${RED}Possible secret in $file at line(s) ${match_lines}${NC}"
+                echo -e "     ${YELLOW}matched rule: ${pattern}${NC}"
                 BLOCKED=1
             fi
         done

@@ -13,6 +13,7 @@ Run once per project to install hooks.
 
 import os
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -72,14 +73,63 @@ def merge_hooks(security_hook, testing_hook, output_hook):
 
 
 def install_hooks():
-    """Install all git hooks"""
-    print_header("Installing Git Hooks")
+    """Point git at the committed .githooks/ tree.
+
+    This used to COPY hooks into .git/hooks/, which is untracked and
+    machine-local: the committed hooks never reached another machine,
+    and the two trees drifted apart. It also built pre-commit by
+    concatenating .githooks/pre-commit with pre-commit-testing, and the
+    first ends in "exit 0" - so everything the second contributed was
+    unreachable and never ran.
+
+    core.hooksPath makes the committed tree authoritative: one copy,
+    version controlled, edits effective at once, nothing to re-install.
+    """
+    print_header("Pointing git at .githooks/")
 
     git_dir = Path(".git")
     if not git_dir.exists():
         print_error("Not a git repository!")
         return False
 
+    source_hooks_dir = Path(".githooks")
+    if not source_hooks_dir.exists():
+        print_error(".githooks directory not found!")
+        return False
+
+    result = subprocess.run(
+        ["git", "config", "core.hooksPath", ".githooks"], capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        print_error(f"Could not set core.hooksPath: {result.stderr.strip()}")
+        return False
+
+    for hook in sorted(source_hooks_dir.iterdir()):
+        if hook.is_file():
+            hook.chmod(hook.stat().st_mode | 0o111)
+
+    print_success("core.hooksPath = .githooks (committed hooks are now the live ones)")
+
+    stale = [
+        p.name
+        for p in (git_dir / "hooks").glob("*")
+        if p.is_file() and not p.name.endswith(".sample")
+    ]
+    if stale:
+        print(
+            f"Note: .git/hooks/ holds {len(stale)} file(s) from the old "
+            f"copy-based install: {', '.join(sorted(stale))}."
+        )
+        print(
+            "They are inert now that core.hooksPath is set, and were left "
+            "in place rather than deleted so nothing is lost."
+        )
+    return True
+
+
+def _legacy_copy_install():
+    """Reference only - the copy-based install this script no longer does."""
+    git_dir = Path(".git")
     hooks_dir = git_dir / "hooks"
     hooks_dir.mkdir(exist_ok=True)
 
@@ -256,9 +306,18 @@ def main():
 
     print_header("✅ Git Hooks Setup Complete!")
 
-    print(f"{GREEN}Installed {len(hooks_installed)} hooks:{NC}")
-    for hook in hooks_installed:
-        print(f"  • {hook}")
+    active = subprocess.run(
+        ["git", "config", "core.hooksPath"], capture_output=True, text=True
+    ).stdout.strip()
+    live = sorted(
+        p.name
+        for p in Path(".githooks").iterdir()
+        if p.is_file() and not p.name.startswith(".")
+    )
+    print(f"{GREEN}core.hooksPath = {active or '(unset)'}{NC}")
+    print(f"{GREEN}{len(live)} hook file(s) live from the committed tree:{NC}")
+    for hook in live:
+        print(f"  - {hook}")
     print()
 
     print(f"{YELLOW}Next steps:{NC}")

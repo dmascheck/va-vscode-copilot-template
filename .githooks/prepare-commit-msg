@@ -1,0 +1,16 @@
+#!/bin/bash
+# Prepare-commit-msg hook: Warn on direct commits to main
+# Installed by: python scripts/setup-git-hooks.py
+
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
+    echo ""
+    echo -e "${YELLOW}⚠️  You are committing directly to $BRANCH.${NC}"
+    echo -e "${YELLOW}   Consider using a feature branch instead:${NC}"
+    echo -e "${YELLOW}   git checkout -b $(date +%Y%m%d)-your-feature${NC}"
+    echo ""
+fi

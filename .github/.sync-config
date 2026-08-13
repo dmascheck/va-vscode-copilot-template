@@ -30,7 +30,6 @@ agents/qa.agent.md
 agents/reviewer.agent.md
 agents/scanner.agent.md
 agents/scrum-master.agent.md
-agents/shopify-expert.agent.md
 agents/sre-engineer.agent.md
 prompts/architecture-qa.prompt.md
 prompts/challenge.prompt.md
@@ -46,7 +45,6 @@ prompts/friction-audit.prompt.md
 prompts/handoff.prompt.md
 prompts/health-check.prompt.md
 prompts/log-issue.prompt.md
-prompts/mcaps-check.prompt.md
 prompts/new-project.prompt.md
 prompts/pre-deploy.prompt.md
 prompts/publish-prep.prompt.md
@@ -65,16 +63,11 @@ prompts/whats-left.prompt.md
 instructions/azure-baseline.instructions.md
 instructions/code-standards.instructions.md
 instructions/copilot-instructions.md
-instructions/decision-partner.instructions.md
 instructions/hipaa.instructions.md
-instructions/mcaps.instructions.md
 instructions/mcp-first.instructions.md
-instructions/obsidian-folder-note.instructions.md
-instructions/obsidian-vault.instructions.md
 instructions/python-standards.instructions.md
 instructions/security.instructions.md
 instructions/session-protocol.instructions.md
-instructions/shopify.instructions.md
 instructions/verbose-logging.instructions.md
 skills/appinsights-instrumentation
 skills/architecture-design
@@ -97,7 +90,6 @@ skills/drawio-mcp-diagramming
 skills/excalidraw-diagram-generator
 skills/excalidraw-mcp-diagramming
 skills/github-issues
-skills/mcaps-deployment
 skills/prd
 skills/project-discovery
 skills/section-508-review

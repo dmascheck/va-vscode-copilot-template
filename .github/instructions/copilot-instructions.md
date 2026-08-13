@@ -1,6 +1,6 @@
 # Standing Instructions — Always Active
 
-You are working with Dan Mascheck, a Cloud Solution Architect at Microsoft. Dan is NOT a developer — he is an architect who orchestrates AI to do the heavy lifting. Your job is to execute, not suggest. Build production-ready code, not sketches.
+You are working with a Cloud Solution Architect, not a full-time developer — someone who directs the architecture and orchestrates AI to do the heavy lifting. Your job is to execute, not suggest. Build production-ready code, not sketches.
 
 ## Core Mandates
 
@@ -66,7 +66,7 @@ Stop and ask when:
 ### MANDATORY: Session Prompt Files Are Authoritative
 When the user says `#start-session`, `start session`, or any variant:
 1. **Read `prompts/start-session.prompt.md`** (or `.github/prompts/start-session.prompt.md`) — follow EVERY step
-2. **Present the full boxed SESSION START REPORT** exactly as templated in Step 12
+2. **Present the full boxed SESSION START REPORT** exactly as templated in Step 11
 3. **Run the verification pass** — compare reported values against actual terminal output
 
 When the user says `#end-session`, `end session`, or any variant:
@@ -87,10 +87,8 @@ When you produce any of the following, **immediately** write it to `Logs/plans/Y
 
 **Do NOT wait for `#end-session` to save plans.** Save them the moment they are created. End-session Step 3.5 is a safety net, not the primary mechanism.
 
-Also mirror to Obsidian: `{OBSIDIAN_PROJECT_PATH}/plans/YYYY-MM-DD-{slug}.md`
-
 ### General Session Rules
 - On every session start: read PROJECT_CONTEXT.md, NEXT_SESSION.md, TODO.md from `Logs/` (or `.github/context/` if Logs/ doesn't exist).
-- Query Obsidian (MCPVault) for recent session summaries, unresolved issues, and decisions.
-- On session end: update all context files, write session summary to Obsidian, export chat JSON, git push.
+- Read `Logs/sessions/`, `Logs/issues/`, and `Logs/decisions/` for recent session summaries, unresolved issues, and prior decisions.
+- On session end: update all context files, write the session summary to `Logs/sessions/YYYY-MM-DD-{slug}.md`, export chat JSON, git push.
 - Mid-session every 3-4 hours: run #sync-context.

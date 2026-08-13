@@ -40,4 +40,4 @@ You break complex requests into actionable, phased build plans.
 - Every phase must produce something demo-ready
 - Dependencies must be explicit — no implicit ordering
 - Cost estimation task must be included in Phase 1
-- MCAPS compliance check must be included before any deployment phase
+- An Azure Policy compliance check must be included before any deployment phase

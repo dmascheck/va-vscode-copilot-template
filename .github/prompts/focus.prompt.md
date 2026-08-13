@@ -17,7 +17,7 @@ This prompt writes ONE file. It does NOT begin the work.
 3. **Pin the done-condition — pick the tier** (from AGENTS.md Section 8):
    - **Tier A (strongest):** a command that exits 0 when done — `pytest -q`, `npm test`, `ruff check`, a gate script. Put it in `done_cmd`. Prefer this whenever the task has a real pass/fail.
    - **Tier B:** written, checkable acceptance criteria (for quality/fuzzy work with no natural command). List them under `# Acceptance criteria`. Leave `done_cmd` empty.
-   - **Tier C:** human judgment (taste, aesthetics, requirements only Dan can confirm). Leave `done_cmd` empty, plan to set `status: blocked` when it needs his eyes. Do NOT fake a command that trivially passes.
+   - **Tier C:** human judgment (taste, aesthetics, requirements only the architect can confirm). Leave `done_cmd` empty, plan to set `status: blocked` when it needs their eyes. Do NOT fake a command that trivially passes.
 
 4. **List out-of-scope items.** The things NOT to chase during this task. Drift gets logged in the tangent log, not switched to.
 
@@ -44,6 +44,6 @@ This prompt writes ONE file. It does NOT begin the work.
 ## Rules
 - One active task at a time. If an active contract already exists, UPDATE it rather than stacking a second.
 - `done_cmd` must be a real check the task actually exercises — never a self-graded box.
-- When the task completes, set `status: done`; when blocked on a Dan decision, set `status: blocked`.
+- When the task completes, set `status: done`; when blocked on an architect decision, set `status: blocked`.
 - Enforcement note: in Claude Code the convergence-guard Stop hook reads this file and can block a premature stop. In Copilot there is no such hook yet — the contract is honored as discipline and surfaced by `#start-session`. Either way, YOU drive to the done-condition; the file keeps you honest about what "done" means.
 - No emojis in the committed file.

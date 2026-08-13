@@ -96,7 +96,7 @@
       "# ${1|BlobServiceClient,CosmosClient,SecretClient,SearchClient|}",
       "${0}"
     ],
-    "description": "Azure DefaultAzureCredential setup (MCAPS-compliant, no connection strings)"
+    "description": "Azure DefaultAzureCredential setup (policy-compliant, no connection strings)"
   },
 
   "Azure Blob Client": {
@@ -114,7 +114,7 @@
       ")",
       "${0}"
     ],
-    "description": "Azure Blob Storage client (MCAPS-compliant, DefaultAzureCredential)"
+    "description": "Azure Blob Storage client (policy-compliant, DefaultAzureCredential)"
   },
 
   "Azure Cosmos Client": {
@@ -134,7 +134,7 @@
       "container = database.get_container_client(\"${1:container_name}\")",
       "${0}"
     ],
-    "description": "Azure Cosmos DB client (MCAPS-compliant, DefaultAzureCredential)"
+    "description": "Azure Cosmos DB client (policy-compliant, DefaultAzureCredential)"
   },
 
   "FastAPI Lifespan": {

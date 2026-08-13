@@ -1,13 +1,13 @@
 ---
 name: debugging
-description: "Systematic anti-loop debugging methodology. Searches Obsidian for prior issues before suggesting fixes. Diagnoses comprehensively before fixing. MCAPS-aware for Azure issues. Use when encountering errors, bugs, or unexpected behavior."
+description: "Systematic anti-loop debugging methodology. Searches the project issue log for prior issues before suggesting fixes. Diagnoses comprehensively before fixing. Azure-Policy-aware for Azure issues. Use when encountering errors, bugs, or unexpected behavior."
 ---
 
 # Debugging Skill
 
 ## Anti-Loop Protocol
 BEFORE suggesting any fix, ALWAYS:
-1. Search Obsidian `06 - Projects/{domain}/{project-name}/issues/` for this error/symptom
+1. Search `Logs/issues/` for this error/symptom
 2. Check if the same command/approach was tried earlier in this session
 3. If a prior fix exists and WORKED → use it
 4. If a prior fix FAILED → try a DIFFERENT approach
@@ -15,12 +15,12 @@ BEFORE suggesting any fix, ALWAYS:
 
 ## Diagnostic Methodology
 
-### Step 0: MCAPS Quick Check (Azure errors only)
+### Step 0: Azure Policy Quick Check (Azure errors only)
 If error is 403, timeout, connection refused, or network-related:
-- Check .env.project for MCAPS_*_PUBLIC_ACCESS flags
+- Check whether public network access is disabled on the target resource
 - Check if the service requires Private Endpoint
-- Check if the request is coming from localhost (MCAPS blocks some services from localhost)
-- If MCAPS is likely the cause → generate #mcaps-check prompt
+- Check if the request is coming from localhost (policy commonly blocks services from localhost)
+- If policy is likely the cause → check the policy patterns in `azure-baseline.instructions.md` and query `az policy assignment list`
 
 ### Step 1: Capture & Classify
 - Exact error message, stack trace, HTTP status
@@ -36,8 +36,8 @@ Do ALL of these before attempting any fix:
 - If Azure-related: check resource health, auth, networking
 
 ### Step 3: Root Cause Analysis
-- Search Obsidian ISSUES for similar symptoms across all projects
-- Search Obsidian LESSONS for known anti-patterns
+- Search `Logs/issues/` for similar symptoms recorded on this project
+- Search `Logs/lessons/` for known anti-patterns
 - Check Microsoft Learn for known issues with the SDK/service version
 - Isolate: code vs config vs Azure vs environment
 
@@ -47,7 +47,7 @@ Do ALL of these before attempting any fix:
 - Run tests to verify the complete fix
 
 ### Step 5: Document
-Write to Obsidian `06 - Projects/{domain}/{project-name}/issues/`:
+Write to `Logs/issues/YYYY-MM-DD-{slug}.md`:
 ```
 # Issue: [Title]
 **Date**: YYYY-MM-DD

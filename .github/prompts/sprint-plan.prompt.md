@@ -5,7 +5,7 @@ description: "Sprint planning ceremony: break next sprint work into tasks with e
 Run a sprint planning session:
 
 1. Review current TODO.md for pending items
-2. Query Obsidian for any unresolved issues that should be prioritized
+2. Read `Logs/issues/` for any unresolved issues that should be prioritized
 3. Break the next sprint's work into specific tasks with effort estimates (S/M/L)
 4. Identify dependencies between tasks
 5. Identify which tasks can be parallelized

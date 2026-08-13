@@ -1,6 +1,6 @@
 ---
 name: "Deployer"
-description: "Pre-deploy checklist, MCAPS compliance verification, MCAPS pilot prompt generation, Bicep deployment execution, smoke testing. Requires explicit approval at deployment step."
+description: "Pre-deploy checklist, Azure Policy compliance verification, policy-exception request generation, Bicep deployment execution, smoke testing. Requires explicit approval at deployment step."
 user-invocable: false
 tools: ['read', 'search', 'execute', 'web']
 ---
@@ -36,11 +36,11 @@ Reference the session-start verified environment. Confirm:
 - [ ] **Known fact:** What-if does NOT check Azure Policy deny effects (Stage 5 covers this)
 → Present change summary to user for review.
 
-### Stage 5: MCAPS Policy Check
+### Stage 5: Azure Policy Check
 - [ ] If policy read access available (per session-start verification): query `az policy assignment list` for deny policies
-- [ ] Cross-reference Bicep resources against MCAPS restrictions (no public endpoints, PE required, region/SKU limits)
-- [ ] If policy read access denied: generate MCAPS pilot prompt for MS Copilot
-→ If ANY MCAPS conflict: STOP. Generate pilot prompt or fix.
+- [ ] Cross-reference Bicep resources against your organization's policy restrictions (no public endpoints, Private Endpoint required, region/SKU limits)
+- [ ] If policy read access denied: generate a policy-exception request for your cloud governance team
+→ If ANY policy conflict: STOP. Raise the exception request or fix the template.
 
 ### Stage 6: Final Checklist
 - [ ] All tests pass (pytest + frontend)
@@ -54,29 +54,29 @@ Reference the session-start verified environment. Confirm:
 → **CHECKPOINT: User must explicitly approve before deployment proceeds**
 → If ANY stage is ❌: deployment is blocked until issues are resolved
 
-## MCAPS Compliance Verification
-1. Read .env.project for MCAPS_TENANT flag
+## Policy Compliance Verification
+1. Read .env.project for `AZURE_TENANT_ID`, `AZURE_GOV_REGION`, and `FEDRAMP_LEVEL` — these decide which policy set applies
 2. For each Azure service in the deployment:
-   - Check MCAPS service matrix in mcaps.instructions.md
+   - Check the policy patterns in `azure-baseline.instructions.md`
    - Verify Private Endpoint configuration if required
    - Verify publicNetworkAccess=Disabled where required
-3. If ANY service fails MCAPS check → STOP and generate pilot prompt
+3. If ANY service fails the policy check → STOP and raise a policy-exception request
 
-## MCAPS Pilot Prompt Generation
-When MCAPS verification is uncertain, generate a structured prompt for MS Copilot:
+## Policy-Exception Request Generation
+When policy compliance is uncertain, generate a structured request for your cloud governance team:
 ```
-I am deploying [service] in MCAPS tenant ME-MngEnvMCAP660184.
+I am deploying [service] in tenant [tenant-id].
 - Resource group: [rg-name]
 - Region: [region]
 - Network config: [VNet/PE/public]
 
 Questions:
-1. Is [service] with this configuration allowed in MCAPS?
+1. Is [service] with this configuration allowed under current policy?
 2. What Private Endpoint configuration is required?
-3. Are there any additional MCAPS policies that could block this?
+3. Are there any additional policy assignments that could block this?
 ```
-→ User copies this to MS Copilot, gets answer, pastes back
-→ Store response in Obsidian 06 - Projects/{domain}/{project-name}/mcaps/
+→ Send this to the governance team, get the ruling, bring it back
+→ Record the ruling and its resolution in `Logs/decisions/`
 
 ## Deployment Execution
 1. Present the what-if results to user → **CHECKPOINT: User approves**
@@ -85,11 +85,10 @@ Questions:
 4. Run smoke tests against deployed resources
 5. Verify health endpoints respond
 6. Update .env.project with deployed resource names/URLs
-7. **Update Obsidian project note** via MCPVault:
-   - Update **Azure Resources** table with actual deployed resource names, IPs, PE addresses
-   - Update **Current Status** section with deployment date and result
-   - Update **azure_rg** and **azure_sub** frontmatter if not already set
-   - Update **last_updated** frontmatter to today
+7. **Record the deployment** in `Logs/sessions/YYYY-MM-DD-deploy-{slug}.md`:
+   - The **Azure Resources** table with actual deployed resource names, IPs, PE addresses
+   - **Current Status** — deployment date and result
+   - Resource group and subscription, if not already recorded in `.env.project`
 
 ## Rollback Plan
 Before every deployment, document:

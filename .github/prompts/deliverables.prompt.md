@@ -8,6 +8,6 @@ Generate all customer-facing deliverables for this project:
 2. **Cost Breakdown** — Use Azure Pricing to produce a monthly cost estimate by service with assumptions and optimization opportunities
 3. **Feature Summary** — Document what the system does, key capabilities, and user value
 4. **Deployment Guide** — Step-by-step instructions for deploying from scratch (non-technical-friendly)
-5. **Security Posture** — Document security measures: encryption, auth, HIPAA compliance (if applicable), MCAPS compliance
+5. **Security Posture** — Document security measures: encryption, auth, HIPAA compliance (if applicable), Azure Policy compliance
 
 Save all deliverables to the docs/ directory.

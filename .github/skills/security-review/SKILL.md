@@ -117,7 +117,7 @@ After the per-file scan, perform a **holistic review**:
 - **Auth/authz is the highest-value target:** hunt anonymous admin/privileged routes, IDOR (can user A reach user B's object by changing an id?), privilege-escalation paths, and any route that trusts a client-supplied role/flag. These are the findings that actually breach VA-style apps.
 - For each attack path: ATTACK PATH (how an attacker exploits it) | IMPACT | LIKELIHOOD | concrete REMEDIATION. Rank the paths; lead with the one that reaches the most damage for the least effort.
 
-**Two-worlds safety (hard rule):** this is analysis and reasoning ONLY. Do NOT run exploits, scanners, or offensive tooling from this session — especially never in a session that also holds Azure, database, or PHI credentials. Any live exploitation belongs on a disposable, isolated VM. All of Dan's apps are his own authorized targets with synthetic data.
+**Two-worlds safety (hard rule):** this is analysis and reasoning ONLY. Do NOT run exploits, scanners, or offensive tooling from this session — especially never in a session that also holds Azure, database, or PHI credentials. Any live exploitation belongs on a disposable, isolated VM. All reviewed apps are the owner's own authorized targets with synthetic data.
 
 ### Step 6 — Self-Verification Pass
 For EACH finding:

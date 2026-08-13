@@ -212,7 +212,7 @@ resource foundryStorageRole 'Microsoft.Authorization/roleAssignments@2022-04-01'
   - Do not generate with `newGuid()` inside modules — the password changes on redeployment
   - Store as a Key Vault Secret so it can be retrieved after deployment
 - **Authentication method**: Default to `administrators.azureADOnlyAuthentication: true`
-  - Many organizational policies (MCAPS, etc.) block standalone SQL authentication
+  - Many organizational policies block standalone SQL authentication
   - AAD-only authentication + Managed Identity is the most secure configuration
 
 ### Network Secret Handling

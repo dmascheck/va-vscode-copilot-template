@@ -67,4 +67,4 @@ az role assignment create \
 ## Auth Troubleshooting
 1. "DefaultAzureCredential failed" → Check AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET in .env
 2. "403 Forbidden" → Check RBAC role assignments, may need to wait 5-10 min for propagation
-3. "MCAPS blocks" → Service may require Private Endpoint, check MCAPS instructions
+3. "Policy blocks the call" → Service may require a Private Endpoint; check `azure-baseline.instructions.md`

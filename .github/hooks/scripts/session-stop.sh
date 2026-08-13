@@ -27,7 +27,6 @@ fi
 
 # Create Logs directories
 mkdir -p "$LOGS_DIR/chat" "$LOGS_DIR/sessions" "$LOGS_DIR/decisions" "$LOGS_DIR/issues" "$LOGS_DIR/lessons"
-[ -d "$CWD/.github/context" ] && mkdir -p "$LOGS_DIR/mcaps"
 
 # Find and copy chat session JSONL from VS Code's internal storage
 # VS Code stores chat at: ~/Library/Application Support/Code/User/workspaceStorage/{id}/chatSessions/*.jsonl

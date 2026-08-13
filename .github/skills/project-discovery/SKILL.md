@@ -28,7 +28,7 @@ If an answer spawns more questions, follow that rabbit hole before moving on.
 - Are there existing systems this connects to?
 
 ### Tier 3: Technical Architecture
-- What Azure services are needed? (check availability in MCAPS)
+- What Azure services are needed? (check availability in your Azure Government region)
 - What's the authentication model? (Azure AD, API keys, public)
 - What's the data storage strategy? (Cosmos DB, SQL, Table Storage, Blob)
 - What's the deployment target? (App Service, Container Apps, Functions, Static Web Apps)
@@ -37,7 +37,7 @@ If an answer spawns more questions, follow that rabbit hole before moving on.
 
 ### Tier 4: Compliance & Constraints
 - HIPAA required? (VA healthcare projects)
-- MCAPS constraints? (check service matrix)
+- Azure Policy constraints? (check the tenant's deny assignments)
 - FedRAMP requirements?
 - Cost target? (monthly Azure spend budget)
 - Security requirements? (data encryption, audit logging, PHI)

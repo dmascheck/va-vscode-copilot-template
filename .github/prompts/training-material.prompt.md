@@ -49,4 +49,4 @@ Then produce the content with:
 - Skills demonstrated
 - Connection to Microsoft priorities (AI, Cloud, Security)
 
-Save output to docs/ in the project, or to Obsidian 08 - Ideas & Research/ if not project-specific.
+Save output to `docs/` in the project, or to `Logs/lessons/` if not project-specific.

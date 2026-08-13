@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ################################################################################
-# MCAPS-Compliant Deployment Script with Private Endpoints
+# Policy-Compliant Deployment Script with Private Endpoints
 #
 # Purpose: Deploy Azure resources with VNet Integration and Private Endpoints
 # Based on: Real VA Video Connect deployment experience
@@ -675,7 +675,7 @@ main() {
     fi
     
     echo ""
-    log_info "🚀 Starting MCAPS-Compliant Deployment"
+    log_info "🚀 Starting Policy-Compliant Deployment"
     echo ""
     
     # Common setup (skip for search - it's Microsoft-managed)

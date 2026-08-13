@@ -21,7 +21,6 @@ applyTo: '**'
 | Framework docs | Context7 MCP | #fetch URL |
 | GitHub operations | GitHub MCP | gh CLI |
 | Database queries | ADX/Kusto MCP | az kusto |
-| Obsidian vault | MCPVault MCP | direct file read/write |
 | Docker operations | Docker MCP | docker CLI |
 | Task management | Taskmaster AI MCP | manual TODO.md |
 | PDF reading | PDF Reader MCP | manual |

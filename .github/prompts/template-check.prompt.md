@@ -5,7 +5,7 @@ description: "Compare this project's config files against the latest template. I
 Check this project against the latest template for updates:
 
 1. Read this project's `.template-version` file (if it exists) to see what template version it was created from
-2. Read the current template version from the plugin or `/Users/danmascheck/VSCodeProjects/Templates/project-template-vscode/`
+2. Read the current template version from the plugin, or from your local checkout of the template repository
 3. Compare these project-level files against the template:
    - `.vscode/mcp.json` — any new MCP servers added? Any config improvements?
    - `.vscode/settings.json` — any new settings?
@@ -19,7 +19,7 @@ Check this project against the latest template for updates:
    - `.gitignore` — any new patterns?
 4. For each difference found:
    - Classify: is this an INTENTIONAL project customization or UNINTENTIONAL drift?
-   - If the project has customized something (e.g., enabled Shopify MCP), preserve the customization
+   - If the project has customized something (e.g., enabled an extra MCP server), preserve the customization
    - If the template has something new the project is missing, recommend adding it
 5. Present a report:
    - New items available from template (recommend adding)

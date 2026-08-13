@@ -20,11 +20,11 @@ Get a repo ready to go public. Goal: nothing internal, no secrets, no customer/C
    ```
    Also check `git rev-list --all` blobs where feasible. Any hit is a publish blocker: it must be ROTATED (it is a leak) and scrubbed from history (removing the current file is not enough). Report location + type, never the value.
 
-4. **Scan for internal references (BLOCKING).** Grep tracked files AND history for customer names, internal tenant/subscription ids (e.g. `ME-MngEnvMCAP...`), internal hostnames, employee names, and Copilot-only/internal markers. Each hit is a blocker until removed or confirmed-safe by the architect.
+4. **Scan for internal references (BLOCKING).** Grep tracked files AND history for customer names, internal managed-tenant or subscription identifiers, opportunity or deal record ids, internal hostnames, employee names, absolute paths into a personal machine, and Copilot-only/internal markers. Each hit is a blocker until removed or confirmed-safe by the architect.
 
 5. **Confirm `/Logs` + internal material are absent from what will ship.** Verify `/Logs` and internal context are gitignored AND not present in the history that would publish. If they are in history, flag that a history rewrite (or a fresh public mirror) is required.
 
-6. **LICENSE + public README (BLOCKING).** Ensure a LICENSE exists (ask the architect which if absent — his call). Ensure a clean, public-appropriate README: describes the project for an outside reader, no internal context, no Copilot/internal instructions, no customer references.
+6. **LICENSE + public README (BLOCKING).** Ensure a LICENSE exists (ask the architect which if absent — their call). Ensure a clean, public-appropriate README: describes the project for an outside reader, no internal context, no Copilot/internal instructions, no customer references.
 
 7. **Final pre-publish report — go / no-go, BLOCKING items first:**
    - Secrets in history (locations only) — blocker.

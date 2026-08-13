@@ -3,7 +3,8 @@
 Centralized Logging Configuration
 
 Usage:
-    from scripts.logging_config import setup_logging, log_subprocess_result, log_file_operation
+    from scripts.logging_config import (
+        setup_logging, log_subprocess_result, log_file_operation)
     logger = setup_logging("backend")
 
 Categories (default rotation):
@@ -16,13 +17,14 @@ Features:
     - Rotating file handlers with gzip compression on rotation
     - Archived logs moved to Logs/logging/archive/
     - Archives older than 90 days auto-cleaned on rotation
-    - Obsidian error summary generated on rotation
+    - Error summary written to Logs/logging/summaries/ on rotation
     - Console handler (INFO+) + file handler (DEBUG+)
     - Bootstrap fallback if logging setup itself fails
     - Global exception handler
     - Startup diagnostics
     - @log_timing / @log_timing_async decorators
-    - Helper functions for subprocess, file ops, external calls, DB queries, config loading
+    - Helper functions for subprocess, file ops, external calls, DB queries
+      and config loading
     - Optional JSON structured output (STRUCTURED_LOGGING=true env var)
 """
 
@@ -62,7 +64,10 @@ _CATEGORY_DEFAULTS: dict[str, tuple[int, int]] = {
 _DEFAULT_MAX_BYTES = 10 * 1024 * 1024
 _DEFAULT_BACKUP_COUNT = 5
 
-_FORMAT = "%(asctime)s.%(msecs)03d | %(name)s | %(levelname)s | %(module)s.%(funcName)s:%(lineno)d | %(message)s"
+_FORMAT = (
+    "%(asctime)s.%(msecs)03d | %(name)s | %(levelname)s | "
+    "%(module)s.%(funcName)s:%(lineno)d | %(message)s"
+)
 _DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 _JSON_FORMAT = (
@@ -90,7 +95,7 @@ def _gzip_rotator(source: str, dest: str) -> None:
     os.remove(source)
 
     _cleanup_old_archives()
-    _write_obsidian_error_summary(source, base_name, timestamp)
+    _write_error_summary(source, base_name, timestamp)
 
 
 def _gzip_namer(name: str) -> str:
@@ -111,7 +116,7 @@ def _cleanup_old_archives() -> None:
             pass
 
 
-def _write_obsidian_error_summary(source: str, category: str, timestamp: str) -> None:
+def _write_error_summary(source: str, category: str, timestamp: str) -> None:
     """Extract ERROR/WARNING/CRITICAL lines and write summary to Logs/logging/."""
     summary_dir = _LOG_DIR / "summaries"
     summary_dir.mkdir(parents=True, exist_ok=True)
@@ -164,7 +169,7 @@ def setup_logging(
     Args:
         category: Logger name and log file prefix (e.g., "backend", "deployment").
         max_bytes: Max size per log file before rotation. Defaults per category.
-        backup_count: Number of uncompressed backup files to keep. Defaults per category.
+        backup_count: Number of uncompressed backups to keep. Defaults per category.
 
     Returns:
         Configured logger instance.

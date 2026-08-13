@@ -144,7 +144,7 @@ if command -v az &>/dev/null; then
     if echo "$POLICY_COUNT" | grep -qE "^[0-9]+$"; then
       VERIFIED="${VERIFIED}\n[OK] Policy read access: ${POLICY_COUNT} assignments readable"
     else
-      VERIFIED="${VERIFIED}\n[WARN] Policy read access: denied or unavailable (MCAPS policy checks will be limited)"
+      VERIFIED="${VERIFIED}\n[WARN] Policy read access: denied or unavailable (Azure Policy checks will be limited)"
     fi
   fi
 else

@@ -21,12 +21,12 @@ Answer "what is left / are we done / is it complete" with a ledger backed by che
    - **DONE** — each item WITH the proof that just ran (command + exit 0 / count). No proof, no DONE — it moves down a bucket.
    - **IN-PROGRESS** — started; what specifically remains; roughly how much.
    - **NOT-BUILT** — promised or planned but not started. Say so plainly; never blur this into "in progress."
-   - **NEEDS-DAN** — parked decisions/authorizations, numbered and ready to rule (use the #decide / decision-partner format).
+   - **NEEDS-DAN** — parked decisions/authorizations, numbered and ready to rule (use the #decide format).
 
 4. **One-line bottom line first:** "X of Y done and proven; blocked on N decisions" — then the ledger. If the honest answer is "not done", lead with that; never soften it.
 
 ## Hard rules
 - Never say "complete / done / 100%" for anything that lacks an executed proof from step 2.
 - If a check cannot run right now (off-site server, missing env), list the item as UNVERIFIED with the reason — not as done.
-- Distinguish the task Dan actually asked for from adjacent work you noticed; the ledger covers the asked task, extras go in one trailing line.
+- Distinguish the task the architect actually asked for from adjacent work you noticed; the ledger covers the asked task, extras go in one trailing line.
 - Read-only status report — this prompt does not build or fix anything. No emojis.

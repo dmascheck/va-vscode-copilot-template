@@ -29,7 +29,7 @@ description: 'HIPAA compliance rules for VA healthcare projects. Auto-applies wh
 - Data retention policies — auto-delete per VA requirements
 
 ### Infrastructure
-- All resources in MCAPS-compliant Azure subscription
+- All resources in a policy-compliant Azure Government subscription
 - Private Endpoints for all data stores
 - VNet integration for all compute
 - Azure Front Door with WAF for public endpoints

@@ -12,7 +12,7 @@ For any architecture question asked:
    - **Bottom line recommendation** (1-2 sentences — what to use and why)
    - **Why this over alternatives** (table comparing 2-3 options with tradeoffs)
    - **WAF alignment** — which Well-Architected Framework pillars this addresses
-   - **MCAPS considerations** — any MCAPS restrictions for this service
+   - **Policy considerations** — any Azure Policy restrictions for this service
    - **Cost estimate** — rough monthly cost range using Azure Pricing skill
    - **Architecture pattern** — reference the relevant Cloud Design Pattern if applicable
 
@@ -30,4 +30,4 @@ For any architecture question asked:
 
 5. **If the question involves multiple services**, produce a quick architecture diagram using Draw.io or Excalidraw MCP.
 
-6. **Save the Q&A** to Obsidian decisions/ if it resulted in an architecture decision for a specific project.
+6. **Save the Q&A** to `Logs/decisions/` if it resulted in an architecture decision for a specific project.

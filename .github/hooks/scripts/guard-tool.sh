@@ -122,6 +122,41 @@ for key in ("toolInput", "tool_input", "input", "arguments", "parameters"):
 if target is None:
     target = data
 
+# COMMAND-FIELD PRECEDENCE (2026-08-14, after two live false-positive blocks).
+#
+# Every pattern this guard carries is EXECUTION-shaped (rm, git push -f, DROP TABLE, sudo,
+# curl|bash). Such a thing can only ever run through a field that IS a command. Flattening the
+# whole payload and scanning the prose instead blocked, on consecutive days: a plan document
+# whose text contained "...form name..." near ".githooks", and TWO subagent launches whose
+# prompts contained `process.env.SQLITE_PATH` after ordinary words carrying "rm" ("terms",
+# "normally") - matching `(rm|del|unlink).*\.env`.
+#
+# So: if the payload carries a command-ish field anywhere, scan ONLY those fields. Prose in a
+# prompt, a plan, a file body or a commit message is not a command and is not scanned here
+# (content-borne secrets are handled by scan-secrets.sh, which scans content correctly).
+# A payload with NO command field falls back to the old flatten-everything behaviour, so an
+# unknown tool shape is still scanned rather than silently trusted.
+COMMAND_KEYS = {"command", "cmd", "commandline", "command_line", "script", "shell",
+                "run", "args", "argv"}
+cmd_parts = []
+
+
+def collect_commands(node):
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if str(key).lower().replace("-", "_") in COMMAND_KEYS:
+                if isinstance(value, str):
+                    cmd_parts.append(value)
+                elif isinstance(value, list):
+                    cmd_parts.extend(str(v) for v in value)
+            collect_commands(value)
+    elif isinstance(node, list):
+        for value in node:
+            collect_commands(value)
+
+
+collect_commands(target)
+
 parts = []
 
 
@@ -139,8 +174,9 @@ def flatten(node):
 
 
 flatten(target)
+scanned = cmd_parts if cmd_parts else parts
 print(name)
-print(" ".join(" ".join(parts).split()))
+print(" ".join(" ".join(scanned).split()))
 ' 2>/dev/null || true)
 
 # AN INTERPRETER FAILURE MUST NOT MEAN "SCAN NOTHING".
@@ -201,9 +237,14 @@ COMBINED="${TOOL_NAME} ${TOOL_INPUT}"
 # Content-borne secrets are scan-secrets.sh's job, which handles content properly.
 # Unknown/empty tool names still get scanned - conservative by default.
 # ---------------------------------------------------------------------------
+# Dispatch tools (task/agent) were added 2026-08-14 after TWO subagent launches were blocked:
+# the BRIEF is prose, and prose about a codebase routinely contains "terms"/"normally" near
+# `process.env.X`, which matches the rm-near-.env rule. A dispatched agent's own tool calls are
+# scanned when THEY happen - blocking the brief buys nothing and costs real work.
 case "$(printf '%s' "$TOOL_NAME" | tr '[:upper:]' '[:lower:]')" in
-  *write*|*edit*|*notebook*|*patch*|*plan*|*todo*|*create_file*|*insert_*|*replace_*)
-    [[ "$OUTPUT" == "text" ]] && echo "[SKIP]  '$TOOL_NAME' writes content, does not execute - command patterns not applied"
+  *write*|*edit*|*notebook*|*patch*|*plan*|*todo*|*create_file*|*insert_*|*replace_*|\
+  *task*|*agent*|*dispatch*|*memory*|*comment*)
+    [[ "$OUTPUT" == "text" ]] && echo "[SKIP]  '$TOOL_NAME' carries content/prose, does not execute - command patterns not applied"
     allow_and_exit
     ;;
 esac

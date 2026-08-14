@@ -43,6 +43,10 @@
 
 set -euo pipefail
 
+# Resolved once: the semantic matcher (guard-match.py) is a sibling of this script, and the
+# hook can be invoked from any directory.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 MODE="${GUARD_MODE:-block}"
 OUTPUT="${GUARD_OUTPUT:-hook}"
 
@@ -174,7 +178,12 @@ def flatten(node):
 
 
 flatten(target)
-scanned = cmd_parts if cmd_parts else parts
+# Command fields FIRST (the matcher reads the head word as the command being run), then
+# every other string as additional segments. Scanning only cmd_parts made a dangerous
+# string in an unrecognised field invisible (selftest CASE C, 2026-08-14); scanning only
+# the flattened payload is what produced the prose false positives. Both, in that order,
+# gives precision on the command and coverage on the rest.
+scanned = (cmd_parts + parts) if cmd_parts else parts
 print(name)
 print(" ".join(" ".join(scanned).split()))
 ' 2>/dev/null || true)
@@ -329,20 +338,57 @@ PATTERNS=(
 THREATS=()
 THREAT_COUNT=0
 
-for entry in "${PATTERNS[@]}"; do
-  category="${entry%%:::*}"
-  rest="${entry#*:::}"
-  severity="${rest%%:::*}"
-  rest="${rest#*:::}"
-  regex="${rest%%:::*}"
-  suggestion="${rest#*:::}"
-
-  if printf '%s\n' "$COMBINED" | grep -qiE -- "$regex"; then
-    match=$(printf '%s\n' "$COMBINED" | grep -oiE -- "$regex" | head -1 || true)
+# ---------------------------------------------------------------------------
+# SEMANTIC MATCHER (2026-08-14). The substring-grep scan this replaces blocked 19 of 28
+# ordinary commands in a fault-injection sweep: `rm -rf /tmp/cache` matched the `rm -rf /`
+# rule, `git push --force-with-lease origin main` matched the rule whose own advice is to
+# use --force-with-lease, `grep -rn "DROP TABLE" migrations/` matched the schema rule, and
+# `cat model.env.json` matched (rm|del|unlink).*\.env on the "del" inside "model".
+#
+# Every false positive teaches the reader to reach for --no-verify, which is how a REAL one
+# eventually gets waved through - so precision here is a safety property, not a nicety.
+#
+# The design copies what already works in ~/.claude/hooks/destructive-guard.py (0/9 false
+# positives on the same sweep, and it still catches a genuine force-push to main):
+#   - split on && || ; | and newlines, so an rm in one segment cannot pair with a .env in another
+#   - tokenize with shlex and judge the HEAD command, so a mention is not an execution
+#     (`grep -rn sudo docs/` is a search; a segment led by grep/cat/echo cannot execute)
+#   - judge rm by its TARGET against a protected-root list, so a path DEEPER than /tmp is work
+#   - negative lookahead for --force(?!-with-lease), word boundaries for main/master
+#   - a download is only exfiltration when the PIPE TARGET is a real interpreter
+# Lookaheads and this shape are not expressible in `grep -E`, and BSD grep has no -P, so the
+# matcher is Python - which this script already requires. The PATTERNS array above remains the
+# degraded fallback for a machine with no python3 (see PY_OK).
+# ---------------------------------------------------------------------------
+if [[ "$PY_OK" == "1" ]]; then
+  # TOOL_INPUT, not COMBINED: $COMBINED prepends the TOOL NAME, and the matcher reads the
+  # first word as the command being run - so "Bash rm -rf /" parsed as a `bash` invocation
+  # and every danger went unseen. Caught by end-to-end testing after the unit tests passed
+  # on bare command strings (2026-08-14).
+  MATCHES=$(printf '%s' "$TOOL_INPUT" | python3 "$SCRIPT_DIR/guard-match.py" 2>/dev/null || true)
+  while IFS=$'\t' read -r category severity match suggestion; do
+    [[ -z "$category" ]] && continue
     THREATS+=("${category}	${severity}	${match}	${suggestion}")
     THREAT_COUNT=$((THREAT_COUNT + 1))
-  fi
-done
+  done <<< "$MATCHES"
+else
+  # Degraded path: the coarse patterns, with their known false-positive rate. Loud about it.
+  echo "[WARN] guard-tool: python3 unavailable - falling back to coarse substring patterns (higher false-positive rate)" >&2
+  for entry in "${PATTERNS[@]}"; do
+    category="${entry%%:::*}"
+    rest="${entry#*:::}"
+    severity="${rest%%:::*}"
+    rest="${rest#*:::}"
+    regex="${rest%%:::*}"
+    suggestion="${rest#*:::}"
+
+    if printf '%s\n' "$COMBINED" | grep -qiE -- "$regex"; then
+      match=$(printf '%s\n' "$COMBINED" | grep -oiE -- "$regex" | head -1 || true)
+      THREATS+=("${category}	${severity}	${match}	${suggestion}")
+      THREAT_COUNT=$((THREAT_COUNT + 1))
+    fi
+  done
+fi
 
 if [[ $THREAT_COUNT -eq 0 ]]; then
   # Clean: say nothing, log nothing.
